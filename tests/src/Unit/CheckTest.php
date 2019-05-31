@@ -5,6 +5,12 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\TestCase;
 use Drupal\social_api\Utility\SocialApiImplementerInstaller;
 use Drupal\social_api\Annotation\Network;
+use Drupal\Drupal\social_api\User\UserAuthenticator;
+
+
+use Drupal\social_api\SocialApiDataHandler;
+
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 
 
@@ -39,31 +45,35 @@ class UserAccessControlHandlerTest extends UnitTestCase {
   public $library;
   public $min_version;
   public $max_version;
+  protected $config;
+  protected $session;
+  protected $form = array();
 
 
   public function __construct()
    {
        parent::__construct();
    }
+
   /**
    * {@inheritdoc}
    */
   public function setUp() {
-
+    $this->session = $this->getMock(SessionInterface::class);
     // enable any other required module
     parent::setUp();
     // $this->socialPostEntityDeleteForm = $this->getMock($SocialPostEntityDeleteForm::class, ['getRedirectUrl']);
   }
 
 
+// test for \Annotation\Network
+  public function testForAnnotationNetwork () {
+    // mock object to our interface
+    $net = new Network($this->form);
+    $this->assertTrue($net instanceof Network);
+  }
 
-  // public function testForAnnotationNetork () {
-  //   // mock object to our interface
-  //   $mock = $this->getMock('Drupal\social_api\Annotation\Network');
-  //   // check if the mock object belongs to our interface
-  //   $this->assertTrue($mock instanceof Network);
-  // }
-
+// test for \Utility\SoaiclApiImplementerInstaller
    public function testSimpleMockDisplayManager() {
    // mock object to our interface
    $mock = $this->getMock('Drupal\social_api\Utility\SocialApiImplementerInstaller');
@@ -84,11 +94,13 @@ class UserAccessControlHandlerTest extends UnitTestCase {
 public function testToCamelCaseInvalidInput() {
   // Arrange.
   // $collection = new SocialApiImplementerInstaller();
-  $collection = new SocialApiImplementerInstaller($machine_name, $name, $library, $min_version, $max_version);
+  $collection = new SocialApiImplementerInstaller();
   // Act.
-  $collection->checkLibrary($machine_name, $name, $library, $min_version, $max_version);
+  $collection->checkLibrary($this->machine_name, $this->name, $this->library, $this->min_version, $this->max_version);
 
 }
+
+
 
 }
 
