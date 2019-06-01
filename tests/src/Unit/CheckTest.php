@@ -6,10 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Drupal\social_api\Utility\SocialApiImplementerInstaller;
 use Drupal\social_api\Annotation\Network;
 use Drupal\Drupal\social_api\User\UserAuthenticator;
-
-
 use Drupal\social_api\SocialApiDataHandler;
-
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 
@@ -40,6 +37,7 @@ class UserAccessControlHandlerTest extends UnitTestCase {
    * @return array
    *   Requirements messages.
    */
+
   public $machine_name;
   public $name;
   public $library;
@@ -50,10 +48,15 @@ class UserAccessControlHandlerTest extends UnitTestCase {
   protected $form = array();
 
 
+
+  /**
+   * __construct function
+   */
   public function __construct()
    {
        parent::__construct();
    }
+
 
   /**
    * {@inheritdoc}
@@ -66,14 +69,26 @@ class UserAccessControlHandlerTest extends UnitTestCase {
   }
 
 
-// test for \Annotation\Network
+  /**
+   * testForAnnotationNetwork
+   * @return assertions
+   */
   public function testForAnnotationNetwork () {
-    // mock object to our interface
+    // assertion to check if the file exists
+    $this->assertFileExists('../drupal8/modules/social_api/src/Annotation/Network.php');
+    // mock object to our interface and checking for instances
     $net = new Network($this->form);
     $this->assertTrue($net instanceof Network);
+    $WFC = new Network($this->form);
+    $WF =  $this->getMock('Drupal\social_api\Annotation\Plugin');
+    $this->assertTrue((new ReflectionClass($WF))->getParentClass()->getName() != $WFC);
+    // assertArray and other methods are not working here.
   }
 
-// test for \Utility\SoaiclApiImplementerInstaller
+  /**
+   * [testSimpleMockDisplayManager description]
+   * @return [type] [description]
+   */
    public function testSimpleMockDisplayManager() {
    // mock object to our interface
    $mock = $this->getMock('Drupal\social_api\Utility\SocialApiImplementerInstaller');
@@ -90,15 +105,19 @@ class UserAccessControlHandlerTest extends UnitTestCase {
 
 }
 
+  /**
+   * [testToCamelCaseInvalidInput description]
+   * @return [type] [description]
+   */
+  public function testToCamelCaseInvalidInput() {
+    // Arrange.
+    // $collection = new SocialApiImplementerInstaller();
+    $collection = new SocialApiImplementerInstaller();
 
-public function testToCamelCaseInvalidInput() {
-  // Arrange.
-  // $collection = new SocialApiImplementerInstaller();
-  $collection = new SocialApiImplementerInstaller();
-  // Act.
-  $collection->checkLibrary($this->machine_name, $this->name, $this->library, $this->min_version, $this->max_version);
+    // Act.
+    $collection->checkLibrary($this->machine_name, $this->name, $this->library, $this->min_version, $this->max_version);
 
-}
+  }
 
 
 
