@@ -8,6 +8,14 @@ use Drupal\social_api\Annotation\Network;
 use Drupal\Drupal\social_api\User\UserAuthenticator;
 use Drupal\social_api\SocialApiDataHandler;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+// Controller
+use Drupal\Core\Controller\ControllerBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\social_api\Plugin\NetworkManager;
+use Drupal\social_api\Controller\SocialApiController;
+use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 
 
@@ -45,7 +53,11 @@ class UserAccessControlHandlerTest extends UnitTestCase {
   public $max_version;
   protected $config;
   protected $session;
+  private $networkManager;
   protected $form = array();
+  protected $namespaces;
+  protected $module_handler;
+  protected $cache_backend;
 
 
 
@@ -62,7 +74,8 @@ class UserAccessControlHandlerTest extends UnitTestCase {
    * {@inheritdoc}
    */
   public function setUp() {
-    $this->session = $this->getMock(SessionInterface::class);
+    // $this->session = $this->getMock(SessionInterface::class);
+
     // enable any other required module
     parent::setUp();
     // $this->socialPostEntityDeleteForm = $this->getMock($SocialPostEntityDeleteForm::class, ['getRedirectUrl']);
@@ -71,7 +84,7 @@ class UserAccessControlHandlerTest extends UnitTestCase {
 
   /**
    * testForAnnotationNetwork
-   * @return assertions
+   * @return [assertions for Annotation Network]
    */
   public function testForAnnotationNetwork () {
     // assertion to check if the file exists
@@ -83,6 +96,43 @@ class UserAccessControlHandlerTest extends UnitTestCase {
     $WF =  $this->getMock('Drupal\social_api\Annotation\Plugin');
     $this->assertTrue((new ReflectionClass($WF))->getParentClass()->getName() != $WFC);
     // assertArray and other methods are not working here.
+  }
+
+
+  /**
+   * test for Controller
+   */
+  // $networkManager = NetworkManager();
+  public function testForSocialApiController () {
+
+    // assertion to check if the file exists
+    $this->assertFileExists('../drupal8/modules/social_api/src/Controller/SocialApiController.php');
+
+    /**
+     * @var PHPUnit_Framework_MockObject_MockObject
+     */
+    $this->namespaces = $this->getMock(Traversable::class);
+    $this->cache_backend = $this->getMock(CacheBackendInterface::class);
+    $this->module_handler = $this->getMock(ModuleHandlerInterface::class);
+
+    // passing parameters for constructor method in NetWorkManager Class
+    $networkManager = new NetworkManager($this->namespaces, $this->cache_backend, $this->module_handler);
+
+    $this->networkManager = $this->getMock(NetworkManager::class,
+                                     array('read'),
+                                     array($this->namespaces, $this->cache_backend, $this->module_handler));
+
+   /**
+    * @var PHPUnit_Framework_MockObject_MockObject
+    */
+   $collection = new SocialApiController($this->networkManager);
+    // $mock = $this->getMock('Drupal\social_api\Controller\SocialApiController',
+    //                                array('read'),
+    //                                array($this->networkManager));
+
+    // $collection = new SocialApiController(NetworkManager $this->networkManager);
+
+
   }
 
   /**
@@ -113,9 +163,8 @@ class UserAccessControlHandlerTest extends UnitTestCase {
     // Arrange.
     // $collection = new SocialApiImplementerInstaller();
     $collection = new SocialApiImplementerInstaller();
-
     // Act.
-    $collection->checkLibrary($this->machine_name, $this->name, $this->library, $this->min_version, $this->max_version);
+    // $collection->checkLibrary($this->machine_name, $this->name, $this->library, $this->min_version, $this->max_version);
 
   }
 
