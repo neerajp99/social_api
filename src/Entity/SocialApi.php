@@ -75,7 +75,7 @@ class SocialApi extends ContentEntityBase implements ContentEntityInterface {
   *   Token in JSON format.
   */
  protected function decryptToken($token) {
-   $key = $this->key;
+   $key = $this->getSalt();
    // Remove the base64 encoding from our key.
    $encryption_key = base64_decode($key);
    // To decrypt, split the encrypted data from our IV -
